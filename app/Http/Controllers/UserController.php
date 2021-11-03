@@ -13,4 +13,19 @@ class UserController extends Controller
             'user' => $user,
         ]);
     }
+    
+     public function favorites($id){
+        $user = User::findOrFail($id);
+        
+        $user->loadRelationshipCounts();
+        
+        $favorites = $user->favorites()->paginate(5);
+    
+    
+    return view('users.favorites',[
+        'user' => $user,
+        'product' => $favorites,
+    ]);
+    
+    }
 }

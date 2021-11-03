@@ -4,26 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Product;
+use App\User;
 class ProductController extends Controller
 {
-    public function index(){
-        $product = Product::all();
-        
-        return view('product.index',[
-            'products' => $product,
-        ]);
+    public function index(Request $request){
+    
+    if($request->has('keyword')){
+        $product = Product::where('name','like','%'.$request->get("keyword").'%')->paginate(9);
         
     }
+    else{
+        $product = Product::paginate(9);
+    }
+    return view('product.index',[
+        'products' => $product,
+    ]);
+    }
+    
     public function show($id)
     {
-        
-        $product = Product::findOrFail($id);
+         $product = Product::findOrFail($id);
     
-        
-      
+        $favorites = $product->favorite_users()->count();
         return view('product.show',[
             'product' => $product,
-           
+            'favorites' => $favorites,
            
         ]);
     }
